@@ -73,7 +73,7 @@ Proof.
 Qed.
 
 
-(* 
+(*
 Exercise 1.3. Derive the induction principle for products indA×B, using only the projections and
 the propositional uniqueness principle uniqA×B. Verify that the definitional equalities are valid.
 Generalize uniqA×B to Σ-types, and do the same for Σ-types.
@@ -118,7 +118,7 @@ with the defining equations:
     iter ( C, c 0 , c s , succ ( n )) : ≡ c s ( iter ( C, c 0 , c s , n ))
 
 derive a function having the type of the recursor rec N . Show that the defining equations of the
-recursor hold propositionally for this function, using the induction principle for N.    
+recursor hold propositionally for this function, using the induction principle for N.
  *)
 
 Local Open Scope nat_scope.
@@ -152,8 +152,9 @@ Proof.
     exact ((nat_iter (sig P) (0 ; p0) (sigsuc P psuc) n) .2).
 Qed.
 
-(* 
-Exercise 1.5. 
+Close Scope nat_scope.
+(*
+Exercise 1.5.
 Show that if we define A + B : ≡ ∑ ( x:2 ) rec 2 (U , A, B, x ) , then we can give a definition
 of ind A + B for which the definitional equalities stated in §1.7 hold.
  *)
@@ -196,9 +197,9 @@ Proof.
   reflexivity.
 Qed.
 
-(* 
-Exercise 1.6. Show that if we define 
-  A × B : ≡ ∏ ( x:2 ) rec 2 (U , A, B, x ), 
+(*
+Exercise 1.6. Show that if we define
+  A × B : ≡ ∏ ( x:2 ) rec 2 (U , A, B, x ),
 then we can give a definition of ind A × B for which the definitional equalities
 stated in §1.5 hold propositionally (i.e. using equality types).
 *)
@@ -229,8 +230,36 @@ Proof.
 Qed.
 
 (*
-Exercise 1.7. Give an alternative derivation of ind 0 = A
- from ind = A which avoids the use of universes.
+Exercise 1.7. Give an alternative derivation of
+  ind'=A from ind=A
+which avoids the use of universes.
 (This is easiest using concepts from later chapters.)
-*)
-  
+ *)
+
+Section based_path_induction.
+  Variable A : Type.
+  Variable a : A.
+
+  Definition based_path_space : Type :=
+    sig (fun x => a = x).
+
+  Definition
+    free_path_ind : forall (P : forall (x y : A) (p : x = y), Type)
+                           (x y : A) (p : x = y) (p0 : P x x idpath), P x y p.
+  Proof.
+    intros P x y p p0. apply paths_ind. assumption.
+  Defined.
+
+  Instance pathspace_contr : Contr based_path_space.
+  Proof.
+    - refine (Build_Contr _ (a ; idpath) _).
+      * intros [x p]. 
+        apply (paths_ind A.
+    - assert (H : forall (x : A) (p : a = x), refl
+    - refine (Contra { center := (a ; idpath), contr := _}).
+
+  Search uncurry.
+
+  Definition based_path_ind {A : Type} (a : A) (C : forall (x : A) (p : a = x), Type)
+           (c_refl : C a idpath) : forall (x : A) (p : a = x), C x p.
+  Proof.
