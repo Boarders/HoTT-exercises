@@ -236,6 +236,8 @@ which avoids the use of universes.
 (This is easiest using concepts from later chapters.)
  *)
 
+Set Printing Implicit.
+
 Section based_path_induction.
   Variable A : Type.
   Variable a : A.
@@ -253,13 +255,15 @@ Section based_path_induction.
   Instance pathspace_contr : Contr based_path_space.
   Proof.
     - refine (Build_Contr _ (a ; idpath) _).
-      * intros [x p]. 
-        apply (paths_ind A.
-    - assert (H : forall (x : A) (p : a = x), refl
-    - refine (Contra { center := (a ; idpath), contr := _}).
+      * intros [x p].
+        exact (free_path_ind (fun a x p => (a; idpath) = (x; p)) a x p idpath).
+  Defined.
 
-  Search uncurry.
-
-  Definition based_path_ind {A : Type} (a : A) (C : forall (x : A) (p : a = x), Type)
+  Definition based_path_ind (C : forall (x : A) (p : a = x), Type)
            (c_refl : C a idpath) : forall (x : A) (p : a = x), C x p.
   Proof.
+    apply equiv_sig_ind'. intros sg.
+    assert (H : (a ; idpath) = sg).
+      { exact (@contr based_path_space pathspace_contr sg).}
+    rewrite <- H. exact c_refl.
+  Defined.
