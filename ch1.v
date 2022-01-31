@@ -264,6 +264,13 @@ Section based_path_induction.
   Proof.
     apply equiv_sig_ind'. intros sg.
     assert (H : (a ; idpath) = sg).
-      { exact (@contr based_path_space pathspace_contr sg).}
-    rewrite <- H. exact c_refl.
+    { exact (@contr based_path_space pathspace_contr sg).}
+    Check (transport, sig).
+    Check equiv_sig_ind'.
+    Check sig.
+    assert (C_cur : forall (p : {x | a = x}), Type).
+    { exact (fun sg => C sg.1 sg.2).
+    }
+    Check equiv_sig_ind'.
+    exact (transport (fun sg => C sg.1 sg.2) H c_refl).
   Defined.
