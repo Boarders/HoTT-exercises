@@ -254,7 +254,7 @@ Section based_path_induction.
 
   Instance pathspace_contr : Contr based_path_space.
   Proof.
-    - refine (Build_Contr _ (a ; idpath) _).
+    - refine (Build_Contr _ (a ; idpath) _). 
       * intros [x p].
         exact (free_path_ind (fun a x p => (a; idpath) = (x; p)) a x p idpath).
   Defined.
@@ -265,8 +265,85 @@ Section based_path_induction.
     apply equiv_sig_ind'. intros sg.
     assert (H : (a ; idpath) = sg).
     { exact (@contr based_path_space pathspace_contr sg).}
-    assert (C_cur : forall (p : {x | a = x}), Type).
-    { exact (fun sg => C sg.1 sg.2).
-    }
     exact (transport (fun sg => C sg.1 sg.2) H c_refl).
+  Defined.
+End based_path_induction.
+(*
+Exercise 1.8
+Define multiplication and exponentiation using rec N . Verify that:
+   (N, + , 0, × , 1) is a semiring using only ind N .
+You will probably also need to use symmetry and transitivity of
+equality, Lemmas 2.1.1 and 2.1.2.
+ *)
+  (* symmetry of equality (2.1.1) corresponds to the symmetry tactic *)
+  (* transitivity of equality is given by @ notation *)
+
+Section Semiring_Nat.
+
+  Variable A : Type.
+
+
+  Definition add : nat -> nat -> nat.
+  Proof.
+    refine (nat_ind (fun _ => nat -> nat) _ _).
+    (* zero case *)
+    * exact id.
+    (* successor case *)
+    * intros n add_n m. exact (S (add_n m)).
+  Defined.
+
+  Definition mul : nat -> nat -> nat.
+  Proof.
+    refine (nat_ind (fun _ => nat -> nat) _ _).
+    (* zero case *)
+    * intros _. exact 0%nat.
+    (* successor case *)
+    * intros n mul_n m. exact (add m (mul_n m)).
+  Defined.
+
+  Definition exp_rev : nat -> nat -> nat.
+  Proof.
+    refine (nat_ind (fun _ => nat -> nat) _ _).
+    (* zero case *)
+    * intros _. exact 1%nat.
+    (* successor case *)
+    * intros n exp_n m. exact (mul m (exp_n m)).
+  Defined.
+
+  Definition exp : nat -> nat -> nat := flip exp_rev.
+
+  Variable
+    n m l : nat.
+
+  Lemma nat_id_l : (add 0 n) = n.
+  Proof.
+    reflexivity.
+  Defined.
+
+  Lemma nat_id_r : forall n, (add n 0) = n.
+  Proof.
+    refine (nat_ind (fun n => (add n 0) = n) _ _).
+    * reflexivity.
+    * intros n' IH. simpl. rewrite IH. reflexivity.
+  Defined.
+
+  Lemma nat_assoc : forall n m l, add (add n m) l = add n (add m l).
+  Proof.
+    refine (nat_ind _ _ _).
+    * reflexivity.
+    * intros n' IH m' l'. simpl. rewrite -> IH. reflexivity.
+  Defined.
+
+  Lemma succ_r : forall n m, add n (S m) = (S (add n m)).
+  Proof.
+    refine (nat_ind _ _ _).
+    * reflexivity.
+    * intros n' IH m'.  simpl. rewrite IH. reflexivity.
+  Defined.
+
+  Lemma nat_comm : forall n m, add n m = add m n.
+  Proof.
+    refine (nat_ind _ _ _).
+    * intros m'.  rewrite (nat_id_r m'). reflexivity.
+    * intros n' IH m'. simpl. rewrite IH. rewrite succ_r. reflexivity.
   Defined.
