@@ -278,7 +278,7 @@ equality, Lemmas 2.1.1 and 2.1.2.
   (* symmetry of equality (2.1.1) corresponds to the symmetry tactic *)
   (* transitivity of equality is given by @ notation *)
 
-Section Semiring_Nat.
+Section Semiring_nat.
 
   Definition add : nat -> nat -> nat.
   Proof.
@@ -373,7 +373,7 @@ Section Semiring_Nat.
   Lemma mult_dist_r : forall m n l, (mult (add m n) l) = add (mult m l) (mult n l).
   Proof.
     refine (nat_ind _ _ _).
-    * intros n' l'. simpl. reflexivity.
+    * intros n' l'. reflexivity.
     * intros m' IH n' l'. simpl. rewrite IH. rewrite add_assoc. reflexivity.
   Defined.
 
@@ -383,3 +383,29 @@ Section Semiring_Nat.
     * intros n' l'. reflexivity.
     * intros m' IH n' l'. simpl.  rewrite <- IH. rewrite mult_dist_r. reflexivity.
   Defined.
+
+End Semiring_nat.
+(*
+Exercise 1.9.
+Define the type family Fin : N → U mentioned at the end of §1.3, and the
+dependent function fmax : ∏ ( n:N ) Fin ( n + 1 ) mentioned in §1.4.
+*)
+
+  Section Fin.
+
+    Definition Fin : forall (n : nat), Type.
+    Proof.
+      refine (nat_rec _ _ _).
+      * exact Empty.
+      * intros n' fin_n'. exact (sum fin_n' Unit).
+    Defined.
+
+
+    Definition two : Fin 2.
+    Proof.
+      refine (inr _).
+
+    Definition fmax : forall (n : nat), Fin (S n).
+    Proof.
+      refine (nat_rec _ _ _).
+      * exact (inr tt).
