@@ -280,9 +280,6 @@ equality, Lemmas 2.1.1 and 2.1.2.
 
 Section Semiring_Nat.
 
-  Variable A : Type.
-
-
   Definition add : nat -> nat -> nat.
   Proof.
     refine (nat_ind (fun _ => nat -> nat) _ _).
@@ -292,7 +289,7 @@ Section Semiring_Nat.
     * intros n add_n m. exact (S (add_n m)).
   Defined.
 
-  Definition mul : nat -> nat -> nat.
+  Definition mult : nat -> nat -> nat.
   Proof.
     refine (nat_ind (fun _ => nat -> nat) _ _).
     (* zero case *)
@@ -315,19 +312,20 @@ Section Semiring_Nat.
   Variable
     n m l : nat.
 
-  Lemma nat_id_l : (add 0 n) = n.
+  (* proof that addition is a commutative monoid *)
+  Lemma add_id_l : (add 0 n) = n.
   Proof.
     reflexivity.
   Defined.
 
-  Lemma nat_id_r : forall n, (add n 0) = n.
+  Lemma add_id_r : forall n, (add n 0) = n.
   Proof.
     refine (nat_ind (fun n => (add n 0) = n) _ _).
     * reflexivity.
     * intros n' IH. simpl. rewrite IH. reflexivity.
   Defined.
 
-  Lemma nat_assoc : forall n m l, add (add n m) l = add n (add m l).
+  Lemma add_assoc : forall m n l, add (add m n) l = add m (add n l).
   Proof.
     refine (nat_ind _ _ _).
     * reflexivity.
@@ -341,9 +339,47 @@ Section Semiring_Nat.
     * intros n' IH m'.  simpl. rewrite IH. reflexivity.
   Defined.
 
-  Lemma nat_comm : forall n m, add n m = add m n.
+  Lemma add_comm : forall n m, add n m = add m n.
   Proof.
     refine (nat_ind _ _ _).
-    * intros m'.  rewrite (nat_id_r m'). reflexivity.
+    * intros m'.  rewrite (add_id_r m'). reflexivity.
     * intros n' IH m'. simpl. rewrite IH. rewrite succ_r. reflexivity.
+  Defined.
+
+  (* Proof that multiplication defines a monoid *)
+
+  Lemma mult_id_l : forall n, (mult 1 n) = n.
+  Proof.
+    refine (nat_ind _ _ _).
+    * reflexivity.
+    * intros n' IH. simpl. rewrite add_id_r. reflexivity.
+  Defined.
+
+  Lemma mult_id_r : forall n, (mult n 1) = n.
+  Proof.
+    refine (nat_ind _ _ _).
+    * reflexivity.
+    * intros n' IH. simpl. rewrite IH. reflexivity.
+  Defined.
+
+  (* show show annihilation and distributivity axioms *)
+  Lemma mult_0_r : forall n, (mult n 0%nat) = 0%nat.
+  Proof.
+    refine (nat_ind _ _ _).
+    * reflexivity.
+    * intros n' IH. simpl. rewrite IH. reflexivity.
+  Defined.
+
+  Lemma mult_dist_r : forall m n l, (mult (add m n) l) = add (mult m l) (mult n l).
+  Proof.
+    refine (nat_ind _ _ _).
+    * intros n' l'. simpl. reflexivity.
+    * intros m' IH n' l'. simpl. rewrite IH. rewrite add_assoc. reflexivity.
+  Defined.
+
+  Lemma mult_assoc : forall m n l, (mult (mult m n) l) = mult m (mult n l).
+  Proof.
+    refine (nat_ind _ _ _).
+    * intros n' l'. reflexivity.
+    * intros m' IH n' l'. simpl.  rewrite <- IH. rewrite mult_dist_r. reflexivity.
   Defined.
