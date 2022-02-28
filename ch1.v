@@ -450,3 +450,32 @@ Section dne.
     intros not_not_not_a a. apply not_not_not_a. intros not_a. apply not_a. exact a.
   Defined.
 End dne.
+
+(*
+Exercise 1.12.
+Using the propositions as types interpretation, derive the following tautologies.
+(i) If A, then (if B then A).
+(ii) If A, then not (not A).
+(iii) If (not A or not B), then not (A and B).
+ *)
+Section tautologies.
+  Variable A B : Type.
+
+  Lemma taut_1 (a : A) : forall (b : B), A.
+  Proof.
+    intros _. exact a.
+  Defined.
+
+  Lemma taut_2 (a : A) : ~~A.
+  Proof.
+    intros not_a. apply not_a. exact a.
+  Defined.
+
+  Lemma taut_3 (p : sum (~A) (~B)) : ~ (A * B).
+  Proof.
+    intros [a b]. Locate sum. destruct p as [not_a | not_b].
+    * apply not_a. exact a.
+    * apply not_b. exact b.
+  Defined.
+
+End tautologies.
