@@ -405,3 +405,38 @@ dependent function fmax : ∏ ( n:N ) Fin ( n + 1 ) mentioned in §1.4.
       * exact (inl tt).
       * intros n max_n. exact (inr max_n).
     Defined.
+
+  End Fin.
+
+(*
+Exercise 1.10. Show that the Ackermann function ack : N → N → N is definable using only
+rec N satisfying the following equations:
+
+  ack ( 0, n ) ≡ succ ( n ) ,
+  ack ( succ ( m ) , 0 ) ≡ ack ( m, 1 ) ,
+  ack ( succ ( m ) , succ ( n )) ≡ ack ( m, ack ( succ ( m ) , n )).
+
+ *)
+
+Definition ack : nat -> nat -> nat.
+Proof.
+  refine (nat_rec _ _ _).
+    (* ack 0 n = succ n *)
+  - exact succ.
+  - intros m ack_m.
+    Check nat_rec.
+    refine (nat_rec _ _ _).
+    (* ack (succ m) 0 = ack m 1 *)
+    * exact (ack_m 1%nat).
+    * intros ack_succ_m_0 ack_succ_m_n.
+      refine (ack_m _).
+      exact ack_succ_m_n.
+    Defined.
+
+Compute ack (succ 0) 0.
+
+Lemma ack_0 : forall m , ack (succ m) 0 = ack m 1.
+Proof.
+  intros n. induction n as [| n' IH].
+  - Compute ack (succ 0) 0.
+Admitted.
