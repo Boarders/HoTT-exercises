@@ -162,10 +162,10 @@ of ind A + B for which the definitional equalities stated in §1.7 hold.
 Definition Sum (A : Type) (B : Type) :=
   sig (Bool_rect (fun _ => Type) A B).
 
-Definition inl {A : Type} (B : Type) (a : A) : Sum A B :=
+Definition my_inl {A : Type} (B : Type) (a : A) : Sum A B :=
   (true ; a).
 
-Definition inr {B : Type} (A : Type) (b : B) : Sum A B :=
+Definition my_inr {B : Type} (A : Type) (b : B) : Sum A B :=
   (false ; b).
 
 Definition sum_ind {A B C : Type} (on_left : A -> C) (on_right : B -> C) (e : Sum A B) : C.
@@ -185,14 +185,14 @@ Defined.
 
 Lemma sum_ind_inl
   : forall {A B C : Type} (on_left : A -> C) (on_right : B -> C) (a : A),
-    sum_ind on_left on_right (inl B a) = on_left a.
+    sum_ind on_left on_right (my_inl B a) = on_left a.
 Proof.
   reflexivity.
 Qed.
 
 Lemma sum_ind_inr
   : forall {A B C : Type} (on_left : A -> C) (on_right : B -> C) (b : B),
-    sum_ind on_left on_right (inr A b) = on_right b.
+    sum_ind on_left on_right (my_inr A b) = on_right b.
 Proof.
   reflexivity.
 Qed.
@@ -254,7 +254,7 @@ Section based_path_induction.
 
   Instance pathspace_contr : Contr based_path_space.
   Proof.
-    - refine (Build_Contr _ (a ; idpath) _). 
+    - refine (Build_Contr _ (a ; idpath) _).
       * intros [x p].
         exact (free_path_ind (fun a x p => (a; idpath) = (x; p)) a x p idpath).
   Defined.
@@ -393,19 +393,15 @@ dependent function fmax : ∏ ( n:N ) Fin ( n + 1 ) mentioned in §1.4.
 
   Section Fin.
 
-    Definition Fin : forall (n : nat), Type.
-    Proof.
-      refine (nat_rec _ _ _).
-      * exact Empty.
-      * intros n' fin_n'. exact (sum fin_n' Unit).
-    Defined.
-
-
-    Definition two : Fin 2.
-    Proof.
-      refine (inr _).
+    Fixpoint Fin (n : nat) : Type :=
+      match n with
+      | 0%nat => Empty
+      | (S n) => sum Unit (Fin n)
+      end.
 
     Definition fmax : forall (n : nat), Fin (S n).
     Proof.
       refine (nat_rec _ _ _).
-      * exact (inr tt).
+      * exact (inl tt).
+      * intros n max_n. exact (inr max_n).
+    Defined.
