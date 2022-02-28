@@ -440,3 +440,13 @@ Proof.
   intros n. induction n as [| n' IH].
   - Compute ack (succ 0) 0.
 Admitted.
+
+(* Exercise 1.11. Show that for any type A, we have ¬¬¬ A → ¬ A. *)
+Section dne.
+  Variable A : Type.
+
+  Theorem dne_stable : ~~~ A -> ~A.
+  Proof.
+    intros not_not_not_a a. apply not_not_not_a. intros not_a. apply not_a. exact a.
+  Defined.
+End dne.
