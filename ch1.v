@@ -121,6 +121,7 @@ derive a function having the type of the recursor rec N . Show that the defining
 recursor hold propositionally for this function, using the induction principle for N.
  *)
 
+Module nat_rec.
 Local Open Scope nat_scope.
 
 Fixpoint nat_iter (C : Type) (c0 : C) (csuc : C -> C) (n : nat) : C :=
@@ -153,6 +154,7 @@ Proof.
 Qed.
 
 Close Scope nat_scope.
+End nat_rec.
 (*
 Exercise 1.5.
 Show that if we define A + B : ≡ ∑ ( x:2 ) rec 2 (U , A, B, x ) , then we can give a definition
@@ -430,6 +432,7 @@ Proof.
     * exact (ack_m 1%nat).
     * intros ack_succ_m_0 ack_succ_m_n.
       refine (ack_m _).
+    (* ack (succ m) (succ n) = ack m (ack (succ m) n) *)
       exact ack_succ_m_n.
     Defined.
 
@@ -437,9 +440,13 @@ Compute ack (succ 0) 0.
 
 Lemma ack_0 : forall m , ack (succ m) 0 = ack m 1.
 Proof.
-  intros n. induction n as [| n' IH].
-  - Compute ack (succ 0) 0.
-Admitted.
+  reflexivity.
+Qed.
+
+Lemma ack_n : forall m n, ack (succ m) (succ n) = ack m (ack (succ m) n).
+Proof.
+  reflexivity.
+Qed.
 
 (* Exercise 1.11. Show that for any type A, we have ¬¬¬ A → ¬ A. *)
 Section dne.
@@ -479,3 +486,8 @@ Section tautologies.
   Defined.
 
 End tautologies.
+
+(*
+Exercise 1.13. Using propositions-as-types, derive the double negation of the principle of ex-
+cluded middle, i.e. prove not (not (P or not P)).
+*)
