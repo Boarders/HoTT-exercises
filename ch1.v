@@ -500,3 +500,35 @@ Section excl_middle_stable.
   Defined.
 
 End excl_middle_stable.
+
+(*
+Exercise 1.16. Show that addition of natural numbers is commutative:
+
+(i,j : nat ) (i + j = j + i)
+*)
+
+
+Section nat_comm.
+
+  Lemma nat_r_id : forall i : nat, add i 0 = add 0 i.
+  Proof.
+    refine (nat_ind (fun i => add i 0 = add 0 i) _ _).
+    - reflexivity.
+    - intros n IH. simpl. rewrite IH. reflexivity.
+  Defined.
+
+  Lemma nat_succ_r : forall j i : nat, add i (succ j) = succ (add i j).
+  Proof.
+    intros j.
+    refine (nat_ind (fun i => add i (succ j) = succ (add i j)) _ _).
+    - reflexivity.
+    - intros n IH. simpl. rewrite IH. reflexivity.
+    Qed.
+
+  Theorem nat_comm : forall i j : nat, add i j = add j i.
+  Proof.
+    intros i.
+    refine (nat_ind (fun j => add i j = add j i) _ _).
+    * exact (nat_r_id i).
+    * intros n IH.  rewrite nat_succ_r. simpl. rewrite IH. reflexivity.
+  Defined.
