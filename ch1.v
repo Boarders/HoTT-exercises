@@ -491,3 +491,12 @@ End tautologies.
 Exercise 1.13. Using propositions-as-types, derive the double negation of the principle of ex-
 cluded middle, i.e. prove not (not (P or not P)).
 *)
+
+Section excl_middle_stable.
+  Variable P : Type.
+  Theorem excl_middle_stable : ~ ~ (sum P (~ P)).
+  Proof.
+    intros not_em_p. apply not_em_p. right. intros p. apply not_em_p. left. exact p.
+  Defined.
+
+End excl_middle_stable.
