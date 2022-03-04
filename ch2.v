@@ -112,3 +112,28 @@ Section trans_pfs.
 End trans_pfs.
 
 Section trans_pfs_comm.
+  
+(*
+Exercise 2.2. Show that the three equalities of proofs constructed in the previous exercise form a
+commutative triangle. In other words, if the three definitions of concatenation are denoted by
+(trans1 p q), (trans2 p q), and (trans3 p q), then the concatenated equality:
+
+  (trans1 p q) = (trans2 p q) = (trans3 p q)
+
+is equal to the equality (trans1 p q) = (trans3 p q).
+ *)
+  Variable A : Type.
+  Variable x y z : A.
+                 
+  Theorem trans_comm_triangle
+    : forall (p : x = y) (q : y = z),
+      (trans1_eq_2 p q @ trans2_eq_3 p q) =
+      (trans1_eq_3 p q).
+  Proof.
+    refine
+      (@paths_ind A x
+      (fun y p => forall (q : y = z), (trans1_eq_2 p q @ trans2_eq_3 p q) = (trans1_eq_3 p q)) _ y).
+    refine
+      (@paths_ind A x (fun z q => (trans1_eq_2 _ q @ trans2_eq_3 _ q) = (trans1_eq_3 _ q)) _ z).
+    exact idpath.
+  Defined.
