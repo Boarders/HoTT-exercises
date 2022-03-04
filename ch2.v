@@ -137,3 +137,9 @@ is equal to the equality (trans1 p q) = (trans3 p q).
       (@paths_ind A x (fun z q => (trans1_eq_2 _ q @ trans2_eq_3 _ q) = (trans1_eq_3 _ q)) _ z).
     exact idpath.
   Defined.
+
+(*
+Exercise 2.3. Give a fourth, different, proof of Lemma 2.1.2, and prove that it is equal to the others.
+
+*)
+
