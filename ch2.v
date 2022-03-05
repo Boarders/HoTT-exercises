@@ -1,4 +1,5 @@
 From HoTT Require Import HoTT.
+From HoTT.Basics Require PathGroupoids.
 (* By default, the HoTT library does not dump a bunch of notations in your
    scope.  However, these notations are tremendously useful, so most users
    of the HoTT library will want to open these two scopes, which introduce
@@ -184,3 +185,77 @@ Section n_path.
     | S n' => {x : n_path n' & ({y : n_path n' & (x = y)})}
     end.
 End n_path.
+
+Eval compute in (n_path nat 2).
+(*
+Exercise 2.5. Prove that the functions (2.3.6) and (2.3.7) are inverse equivalences.
+
+A B : Type
+x y : A
+p   : x = y
+f   : A -> B
+
+(2.3.6): 
+  (f x = f y) -> (p_*(f x) = f y)
+
+(2.3.7):
+  (p_*(f x) = f y) -> f x = f y
+
+*)
+Module non_dep_apd.
+  Check transport_const.
+
+  Lemma forward {A B : Type} (f : A -> B) {x y : A} (p : x = y) :
+    (f x = f y) -> (transport (fun _ => B) p (f x)) = (f y).
+  Proof.
+    intros f_path.
+    refine (transport_const p (f x) @ _).
+    exact f_path.
+  Defined.
+
+  Lemma backward {A B : Type} (f : A -> B) {x y : A} (p : x = y) : (transport (fun _ => B) p (f x)) = (f y) -> (f x) = (f y).
+  Proof.
+    intros f_apd_p.
+    Check transport_const.
+    refine ((transport_const p (f x)) ^ @ _).
+    exact f_apd_p.
+  Defined.
+
+  Theorem for_back {A B : Type} (f : A -> B) {x y : A} {p : x = y} (f_p : f x = f y) :
+    forward f p o backward f p == idmap.
+  Proof.
+    intros dep_eq.
+    
+    unfold forward. unfold backward.
+    path_induction.
+    reflexivity.
+  Defined.
+
+  Theorem back_for {A B : Type} (f : A -> B) {x y : A} {p : x = y} (f_p : f x = f y) :
+    backward f p o forward f p == idmap.
+  Proof.
+    intros dep_eq.
+    unfold forward. unfold backward.
+    path_induction.
+    reflexivity.
+  Defined.
+
+  (* Theorem triangle_law  *)
+
+
+  Instance ex_2_4 {A B : Type} (f : A -> B) {x y : A} {p : x = y} (f_p : f x = f y) :
+    IsEquiv (forward f p).
+  Proof.
+    Check Build_IsEquiv.
+    refine (Build_IsEquiv _ _ (forward f p) (backward f p) (for_back f f_p) (back_for f f_p) _).
+    - 
+    
+    
+    
+      
+    
+  
+  
+    
+End non_dep_apd.
+
