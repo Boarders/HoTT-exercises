@@ -138,8 +138,49 @@ is equal to the equality (trans1 p q) = (trans3 p q).
     exact idpath.
   Defined.
 
+  End trans_pfs_comm.
+
 (*
 Exercise 2.3. Give a fourth, different, proof of Lemma 2.1.2, and prove that it is equal to the others.
+ *)
+Section transport_trans.
+  Variable A : Set.
+  Theorem trans_4 : forall x y z : A, (x = y) -> (y = z) -> (x = z).
+  Proof.
+    intros x y z p q.
+    exact (transport (fun x' => x' = z) (p ^) q).
+  Defined.
 
+End transport_trans.
+
+(*
+Exercise 2.4 
+Define, by induction on n, a general notion of n-dimensional path in a type A,
+simultaneously with the type of boundaries for such paths.
+
+n-paths:
+
+n = 0 - A 0-path is a point
+            x
+            .   : 0-path A
+n = 1 - A 1-path is a equality between two 0-paths i.e. x, y : A, x = y
+          x   y
+          . ~ . : 1-path A
+n = 2 - A 2-path is an equality between one paths i.e. p q : n_path 1, p = q.
+            p
+          . ~ .
+          |   |  : 2-path A
+          . ~ .
+            q
+...
 *)
 
+Section n_path.
+  Variable A : Type.
+        
+  Fixpoint n_path (n : nat) : Type :=
+    match n with
+    | O => A
+    | S n' => {x : n_path n' & ({y : n_path n' & (x = y)})}
+    end.
+End n_path.
